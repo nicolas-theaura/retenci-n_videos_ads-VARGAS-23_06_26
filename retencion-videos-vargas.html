@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retención de Video · Vargas · Junio 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #09090f;
+      --bg2:      #0d0e1c;
+      --card:     #111220;
+      --card2:    #0e0f1d;
+      --border:   #1a1c35;
+      --border2:  #222440;
+      --text:     #e8eaf6;
+      --text2:    #7b85b0;
+      --text3:    #3e4465;
+      --green:    #22c55e;
+      --green-bg: rgba(34,197,94,.10);
+      --amber:    #f59e0b;
+      --amber-bg: rgba(245,158,11,.10);
+      --red:      #ef4444;
+      --red-bg:   rgba(239,68,68,.10);
+      --blue:     #60a5fa;
+      --purple:   #a78bfa;
+      --accent:   #6366f1;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ────────────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(160deg,#13152e 0%,#09090f 65%);
+      border-bottom: 1px solid var(--border);
+      padding: 40px 48px 34px;
+    }
+    .header-inner { max-width: 1200px; margin: 0 auto; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(99,102,241,.13);
+      border: 1px solid rgba(99,102,241,.26);
+      border-radius: 20px;
+      padding: 4px 14px 4px 10px;
+      font-size: 11px; font-weight: 700; letter-spacing: .07em;
+      text-transform: uppercase; color: #a78bfa;
+      margin-bottom: 16px;
+    }
+    .badge i { width:6px; height:6px; border-radius:50%; background:#a78bfa; display:inline-block; }
+
+    .header h1 {
+      font-size: clamp(22px,3.5vw,36px);
+      font-weight: 800; letter-spacing: -.03em; color: #f0f2ff;
+      margin-bottom: 7px;
+    }
+    .header p { color: var(--text2); font-size: 15px; max-width: 580px; }
+
+    .chips { display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+    .chip {
+      display:flex; align-items:center; gap:6px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border2);
+      border-radius: 8px; padding: 5px 12px;
+      font-size: 12px; color: var(--text2);
+    }
+    .chip-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); }
+
+    /* ── DRIVE SETUP BANNER ─────────────────────────────────────── */
+    #setupBanner {
+      background: rgba(99,102,241,.07);
+      border-bottom: 1px solid rgba(99,102,241,.18);
+      padding: 0;
+    }
+    #setupBanner.hidden { display:none; }
+
+    .setup-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 14px 48px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .setup-icon { flex-shrink:0; margin-top:2px; color:#a78bfa; }
+    .setup-text { font-size: 12.5px; color: #b4b8e0; line-height: 1.6; }
+    .setup-text strong { color: #c4c8f0; }
+    .setup-text code {
+      font-family: 'SF Mono','Fira Code',monospace; font-size:11px;
+      background: rgba(99,102,241,.15); border-radius:4px; padding:1px 6px;
+    }
+    .setup-steps { display:flex; flex-direction:column; gap:2px; margin-top:6px; }
+    .setup-step { font-size:12px; color:#8b93b8; }
+    .setup-step span { color:#a78bfa; font-weight:700; }
+
+    /* ── MAIN ───────────────────────────────────────────────────── */
+    .main { max-width:1200px; margin:0 auto; padding:32px 48px 80px; }
+
+    @media (max-width:860px) {
+      .main { padding:20px 18px 60px; }
+      .header { padding:28px 18px 26px; }
+      .setup-inner { padding:12px 18px; }
+    }
+
+    /* info note */
+    .info-note {
+      display:flex; align-items:flex-start; gap:10px;
+      padding:12px 16px;
+      background:rgba(96,165,250,.06);
+      border:1px solid rgba(96,165,250,.16);
+      border-radius:10px;
+      font-size:12.5px; color:var(--text2); line-height:1.55;
+      margin-bottom:26px;
+    }
+    .info-note svg { flex-shrink:0; margin-top:2px; }
+    .info-note strong { color:#93c5fd; }
+
+    /* legend */
+    .legend {
+      display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+      padding:12px 18px;
+      background:var(--card); border:1px solid var(--border); border-radius:10px;
+      margin-bottom:28px; font-size:12px;
+    }
+    .legend-lbl { font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text3); }
+    .legend-item { display:flex; align-items:center; gap:6px; color:var(--text2); }
+    .ld { width:9px; height:9px; border-radius:2px; }
+    .ld-g { background:var(--green); } .ld-a { background:var(--amber); } .ld-r { background:var(--red); }
+
+    /* ── GRID ───────────────────────────────────────────────────── */
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
+    @media (max-width:800px) { .grid { grid-template-columns:1fr; } }
+
+    /* ── CARD ───────────────────────────────────────────────────── */
+    .card {
+      background:var(--card); border:1px solid var(--border); border-radius:18px;
+      overflow:hidden; transition:border-color .2s,transform .2s;
+    }
+    .card:hover { border-color:var(--border2); transform:translateY(-2px); }
+
+    /* video */
+    .vplayer {
+      position:relative; width:100%; padding-top:56.25%;
+      background:var(--bg2); overflow:hidden;
+    }
+    .vplayer iframe { position:absolute; top:0;left:0; width:100%;height:100%; border:none; }
+    .vplaceholder {
+      position:absolute; top:0;left:0; width:100%;height:100%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+      background:radial-gradient(ellipse at center,#13152a 0%,#09090f 100%);
+    }
+    .vph-icon { opacity:.25; }
+    .vph-lbl { font-size:13px; color:var(--text3); }
+    .vph-code {
+      font-size:10.5px; font-family:'SF Mono',monospace;
+      color:rgba(167,139,250,.45); background:rgba(99,102,241,.06);
+      padding:3px 10px; border-radius:4px; border:1px solid rgba(99,102,241,.15);
+    }
+
+    /* card body */
+    .cbody { padding:18px 20px 22px; }
+
+    .crow { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .cname { font-size:16px; font-weight:800; letter-spacing:-.01em; color:#f0f2ff; }
+    .ctag {
+      font-size:10px; font-weight:700;
+      background:rgba(99,102,241,.13); color:#a78bfa;
+      border:1px solid rgba(99,102,241,.22); border-radius:5px; padding:2px 9px;
+    }
+    .cmeta { display:flex; gap:14px; margin-bottom:4px; }
+    .cmeta-i {
+      display:flex; align-items:center; gap:5px;
+      font-size:11.5px; color:var(--text3);
+    }
+    .hook-line {
+      font-size:12px; color:var(--text2); font-style:italic;
+      margin:10px 0 18px;
+      padding:7px 12px;
+      background:rgba(255,255,255,.025);
+      border-left:2px solid var(--border2); border-radius:0 6px 6px 0;
+    }
+
+    /* ── FUNNEL ─────────────────────────────────────────────────── */
+    .f-head {
+      font-size:10px; font-weight:800; text-transform:uppercase;
+      letter-spacing:.10em; color:var(--text3); margin-bottom:12px;
+    }
+
+    .f-row { display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+    .f-lbl {
+      width:82px; flex-shrink:0;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text3);
+      line-height:1.3;
+    }
+    .f-track {
+      flex:1; height:28px;
+      background:rgba(255,255,255,.035); border-radius:6px; overflow:hidden;
+    }
+    .f-bar {
+      height:100%; border-radius:6px; min-width:32px;
+      display:flex; align-items:center; padding:0 10px;
+      transition:width 1.1s cubic-bezier(.4,0,.2,1);
+    }
+    .f-num { font-size:12.5px; font-weight:700; color:rgba(255,255,255,.9); white-space:nowrap; }
+    .f-pct { width:38px; flex-shrink:0; font-size:11px; color:var(--text3); text-align:right; }
+
+    /* bar colors */
+    .b-base  { background:linear-gradient(90deg,#161830,#20233f); }
+    .b-green { background:linear-gradient(90deg,#14532d,#22c55e); }
+    .b-amber { background:linear-gradient(90deg,#92400e,#f59e0b); }
+    .b-red   { background:linear-gradient(90deg,#7f1d1d,#ef4444); }
+
+    /* connectors */
+    .f-conn {
+      display:flex; align-items:center; gap:8px;
+      margin:4px 0; padding-left:90px;
+    }
+    .f-dashes { display:flex; flex-direction:column; gap:2px; opacity:.2; }
+    .f-dashes div { width:2px; height:4px; background:#fff; border-radius:1px; }
+
+    .f-badge {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:3px 10px; border-radius:20px;
+      font-size:11.5px; font-weight:800;
+    }
+    .fb-g { background:var(--green-bg); color:var(--green); border:1px solid rgba(34,197,94,.2); }
+    .fb-a { background:var(--amber-bg); color:var(--amber); border:1px solid rgba(245,158,11,.2); }
+    .fb-r { background:var(--red-bg);   color:var(--red);   border:1px solid rgba(239,68,68,.2); }
+
+    .f-conn-lbl { font-size:10.5px; color:var(--text3); font-style:italic; }
+
+    /* time ruler */
+    .time-ruler {
+      margin:14px 0 0;
+      padding-top:12px;
+      border-top:1px solid var(--border);
+    }
+    .tr-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text3); margin-bottom:8px; }
+    .tr-track { position:relative; height:20px; background:rgba(255,255,255,.04); border-radius:4px; overflow:hidden; }
+    .tr-segment {
+      position:absolute; top:0; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:9.5px; font-weight:700; color:rgba(255,255,255,.8);
+      transition:opacity .2s;
+    }
+    .tr-seg-label {
+      display:flex; justify-content:space-between;
+      margin-top:4px;
+    }
+    .tr-tick { font-size:9.5px; color:var(--text3); }
+
+    /* stats */
+    .stats {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:6px;
+      margin-top:14px; padding-top:14px; border-top:1px solid var(--border);
+    }
+    .stat { text-align:center; }
+    .stat-v { font-size:17px; font-weight:800; letter-spacing:-.02em; color:#f0f2ff; }
+    .stat-l { font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--text3); margin-top:1px; }
+
+    /* ── SUMMARY ────────────────────────────────────────────────── */
+    .summary { margin-top:52px; }
+    .summary-title { font-size:19px; font-weight:800; letter-spacing:-.02em; margin-bottom:20px; color:#f0f2ff; }
+    .ins-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+    @media (max-width:640px) { .ins-grid { grid-template-columns:1fr; } }
+
+    .ins-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; }
+    .ins-tag {
+      display:inline-block; font-size:10px; font-weight:800;
+      text-transform:uppercase; letter-spacing:.07em;
+      border-radius:5px; padding:3px 10px; margin-bottom:10px;
+    }
+    .it-r { background:var(--red-bg); color:var(--red); }
+    .it-g { background:var(--green-bg); color:var(--green); }
+    .it-a { background:var(--amber-bg); color:var(--amber); }
+    .it-b { background:rgba(96,165,250,.09); color:var(--blue); }
+    .it-p { background:rgba(167,139,250,.09); color:var(--purple); }
+
+    .ins-card h4 { font-size:14.5px; font-weight:800; color:#f0f2ff; margin-bottom:8px; line-height:1.3; }
+    .ins-card p { font-size:12.5px; color:var(--text2); line-height:1.65; }
+
+    .footer {
+      border-top:1px solid var(--border);
+      padding:18px 48px;
+      font-size:11px; color:var(--text3);
+      display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+    }
+    @media (max-width:860px) { .footer { padding:16px 18px; } }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="badge"><i></i>Vargas · Fabricamos tus Ideas</div>
+    <h1>¿Dónde estamos perdiendo a las personas?</h1>
+    <p>Análisis de retención por cuartil en videos de generación de leads por WhatsApp</p>
+    <div class="chips">
+      <div class="chip"><span class="chip-dot"></span>4 videos · Junio 2026</div>
+      <div class="chip"><span class="chip-dot"></span>Campaña ABO · WhatsApp</div>
+      <div class="chip"><span class="chip-dot"></span>Fuente: Meta Ads · Exportación oficial</div>
+    </div>
+  </div>
+</header>
+
+<!-- SETUP BANNER -->
+<div id="setupBanner">
+  <div class="setup-inner">
+    <svg class="setup-icon" width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+      <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+    </svg>
+    <div class="setup-text">
+      <strong>Para ver los videos:</strong> subí cada .mp4 a Google Drive y pegá el ID en el objeto <code>DRIVE_IDS</code> al inicio del script.
+      <div class="setup-steps">
+        <div class="setup-step"><span>1.</span> Entrá a drive.google.com → "Nuevo" → "Subir archivo" → seleccioná el .mp4</div>
+        <div class="setup-step"><span>2.</span> Clic derecho en el archivo subido → "Obtener enlace" → cambiar a "Cualquiera con el enlace"</div>
+        <div class="setup-step"><span>3.</span> Copiá el ID de la URL: drive.google.com/file/d/<strong>[ESTE-ES-EL-ID]</strong>/view → pegalo en <code>DRIVE_IDS</code></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="info-note">
+    <svg width="16" height="16" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px">
+      <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+    </svg>
+    <span>Datos de retención exportados directamente de Meta Ads (jun 1 – jun 23, 2026). Cada barra muestra cuántas personas llegaron a ese punto del video. Las tasas entre etapas muestran cuánto retuvo cada segmento respecto al anterior.</span>
+  </div>
+
+  <div class="legend">
+    <span class="legend-lbl">Referencias</span>
+    <div class="legend-item"><div class="ld ld-g"></div>Buen resultado (&gt;60% retención entre etapas)</div>
+    <div class="legend-item"><div class="ld ld-a"></div>Resultado promedio (40–60%)</div>
+    <div class="legend-item"><div class="ld ld-r"></div>Caída significativa (&lt;40%)</div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+    <div class="summary-title">Lo que nos dice la data para los próximos videos</div>
+    <div class="ins-grid">
+
+      <div class="ins-card">
+        <div class="ins-tag it-r">🔴 Hallazgo crítico</div>
+        <h4>AD3: caída brutal al final — el cierre no funciona</h4>
+        <p>De las 78 personas que llegaron al 75% del video (segundo 23), solo 10 vieron el final (segundo 31). Eso es un 12.8% de retención en el último cuarto — el peor número del grupo. Algo en ese tramo final pierde el 87% de los espectadores. Puede ser que el video tenga un cierre demasiado largo, poco dinámico, o que el CTA llegue demasiado tarde cuando la gente ya se fue.</p>
+      </div>
+
+      <div class="ins-card">
+        <div class="ins-tag it-r">🔴 Problema de hook</div>
+        <h4>Contenido 8 no frena el scroll — pero retiene a quien lo ve</h4>
+        <p>Solo el 7.1% de las impresiones llegaron al primer 25% del video (contra 11–16% del resto). El problema está en los primeros 2 segundos: el kit de vino sobre fondo oscuro no genera interrupción visual. Pero quien sí arranca a verlo retiene bien — 54% llega a la mitad y 71% termina el video. El contenido es bueno, el hook no es suficientemente disruptivo.</p>
+      </div>
+
+      <div class="ins-card">
+        <div class="ins-tag it-g">🟢 El mejor retenedor</div>
+        <h4>AD2 tiene la retención más pareja y alta del grupo</h4>
+        <p>65% de quienes vieron el primer cuarto llegaron a la mitad. 68% de esos llegaron al 75%. Y 72% de esos terminaron el video. Es el único video sin caídas abruptas entre etapas. Abre con un producto de un cliente real (Chandon), lo que probablemente genera reconocimiento. Este formato — producto de cliente conocido en close-up — es la referencia de retención a replicar.</p>
+      </div>
+
+      <div class="ins-card">
+        <div class="ins-tag it-b">💡 Para el próximo video</div>
+        <h4>Hook con marca reconocida + contenido continuo sin caídas</h4>
+        <p>La combinación ganadora es: abre con el producto terminado de una marca que el prospecto reconoce (Chandon, Güerrín), mostralo de cerca y en movimiento para frenar el scroll. Después, mantené el ritmo visual constante sin transiciones largas ni slides de texto — eso es lo que genera las caídas en Contenido 5 y AD3. El CTA tiene que estar antes del último 25% del video, no al final.</p>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <span>Vargas · Fabricamos tus Ideas · Análisis de Retención · Junio 2026</span>
+  <span>Meta Ads API · Cuenta act_1818291169103573 · Campaña ABO WhatsApp</span>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+//  PASO 1 — CONFIGURAR IDs DE GOOGLE DRIVE
+//
+//  Para cada video:
+//  1. Subilo a drive.google.com (Nuevo → Subir archivo)
+//  2. Clic derecho → "Obtener enlace" → "Cualquiera con el enlace"
+//  3. La URL es: drive.google.com/file/d/[ID]/view  ← copiá el ID
+//  4. Pegalo en la variable correspondiente abajo
+// ═══════════════════════════════════════════════════════════════════════
+const DRIVE_IDS = {
+  contenido5: "1oBimpsOFIRRza8ti6CJRtcXAGBFDDjKG",
+  ad2:        "1XUj-Ym5XoveYLD2bOppMzjvJDY8m3rrU",
+  contenido8: "1AAmA5W7IolunAim0r6_e55jdqUSX44ji",
+  ad3:        "1jMqXrTtL-hvibSbFzs-LRFAjfn-eOhv8"
+};
+
+// ─── datos completos ──────────────────────────────────────────────────
+const ADS = [
+  {
+    id: "contenido5",
+    name: "Contenido 5",
+    tag: "Mayo",
+    duration: 23.3,
+    hookDesc: "Toma aérea de cancha de fútbol",
+    impressions: 24169,
+    p25: 2758, p50: 1459, p75: 846, p100: 500,
+    conversations: 75,
+    spend: 163655, cpl: 2182
+  },
+  {
+    id: "ad2",
+    name: "AD2",
+    tag: null,
+    duration: 18.1,
+    hookDesc: "Close-up del enfriador Chandon (cliente de Vargas)",
+    impressions: 4612,
+    p25: 735, p50: 476, p75: 323, p100: 232,
+    conversations: 16,
+    spend: 43774, cpl: 2736
+  },
+  {
+    id: "contenido8",
+    name: "Contenido 8",
+    tag: "Junio",
+    duration: 7.3,
+    hookDesc: "Kit de vino en caja de corcho Grupo Vargas",
+    impressions: 7861,
+    p25: 555, p50: 302, p75: 208, p100: 148,
+    conversations: 8,
+    spend: 42085, cpl: 5261
+  },
+  {
+    id: "ad3",
+    name: "AD3",
+    tag: null,
+    duration: 31.4,
+    hookDesc: "Tote bag de Güerrín con logo bordado",
+    impressions: 1530,
+    p25: 173, p50: 113, p75: 78, p100: 10,
+    conversations: 3,
+    spend: 8777, cpl: 2926
+  }
+];
+
+// ─── helpers ──────────────────────────────────────────────────────────
+const fmt = n => n.toLocaleString("es-AR");
+const pct = (a,b) => b===0 ? "0" : (Math.round(a/b*1000)/10).toFixed(1);
+const minW = (n,max) => Math.max(n/max*100, 4).toFixed(1);
+
+function fmtSpend(n) {
+  if (n>=1000000) return "$"+(n/1000000).toFixed(1)+"M";
+  if (n>=100000)  return "$"+Math.round(n/1000)+"K";
+  return "$"+fmt(n);
+}
+
+// color based on step-to-step retention rate
+function stepColor(rate) {
+  if (rate >= 60) return "g";
+  if (rate >= 40) return "a";
+  return "r";
+}
+
+// hook color: % of impressions that reached P25
+function hookColor(rate) {
+  if (rate >= 15) return "g";
+  if (rate >= 10) return "a";
+  return "r";
+}
+
+function icon(c) { return c==="g" ? "✓" : c==="a" ? "≈" : "↓"; }
+
+// ─── card builder ─────────────────────────────────────────────────────
+function buildCard(ad) {
+  const driveId = DRIVE_IDS[ad.id] || "";
+
+  // step-to-step rates
+  const hookRate = parseFloat(pct(ad.p25, ad.impressions));
+  const r25_50   = parseFloat(pct(ad.p50, ad.p25));
+  const r50_75   = parseFloat(pct(ad.p75, ad.p50));
+  const r75_100  = parseFloat(pct(ad.p100, ad.p75));
+  const rConv    = parseFloat(pct(ad.conversations, ad.p100));
+
+  const hc  = hookColor(hookRate);
+  const c25 = stepColor(r25_50);
+  const c50 = stepColor(r50_75);
+  const c75 = stepColor(r75_100);
+  const cCV = rConv >= 12 ? "g" : rConv >= 5 ? "a" : "r";
+
+  // bar widths relative to impressions
+  const max = ad.impressions;
+  const w1  = 100;
+  const w2  = minW(ad.p25, max);
+  const w3  = minW(ad.p50, max);
+  const w4  = minW(ad.p75, max);
+  const w5  = minW(ad.p100, max);
+  const w6  = minW(ad.conversations, max);
+
+  // video embed or placeholder
+  const videoEl = driveId
+    ? `<iframe src="https://drive.google.com/file/d/${driveId}/preview?autoplay=0" allow="autoplay" allowfullscreen></iframe>`
+    : `<div class="vplaceholder">
+        <svg class="vph-icon" width="36" height="36" fill="none" stroke="#fff" stroke-width="1.2" viewBox="0 0 24 24">
+          <rect x="2" y="4" width="20" height="16" rx="3"/>
+          <path d="M9.5 8.5l5.5 3.5-5.5 3.5V8.5z"/>
+        </svg>
+        <div class="vph-lbl">Video sin configurar</div>
+        <div class="vph-code">DRIVE_IDS.${ad.id} = "id-aquí"</div>
+      </div>`;
+
+  // time ruler — show seconds at each quartile
+  const d = ad.duration;
+  const s = n => Math.round(n)+"s";
+  // segment widths = 25% each
+  const segs = [
+    { label:"0–25%", color:"#1e3a8a", w:25 },
+    { label:"25–50%", color:"#1e4d2b", w:25 },
+    { label:"50–75%", color:"#713f12", w:25 },
+    { label:"75–100%", color:`${r75_100<40?"#7f1d1d":"#4a1d96"}`, w:25 }
+  ];
+
+  return `
+  <div class="card">
+    <div class="vplayer">${videoEl}</div>
+    <div class="cbody">
+
+      <div class="crow">
+        <div class="cname">${ad.name}</div>
+        ${ad.tag ? `<div class="ctag">${ad.tag}</div>` : ""}
+      </div>
+      <div class="cmeta">
+        <div class="cmeta-i">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          ${d}s
+        </div>
+        <div class="cmeta-i">
+          <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          ${fmtSpend(ad.spend)} invertidos
+        </div>
+      </div>
+      <div class="hook-line">🎬 ${ad.hookDesc}</div>
+
+      <div class="f-head">Retención por cuartil del video</div>
+
+      <!-- IMPRESSIONES -->
+      <div class="f-row">
+        <div class="f-lbl">Impresiones</div>
+        <div class="f-track"><div class="f-bar b-base" style="width:${w1}%"><span class="f-num">${fmt(ad.impressions)}</span></div></div>
+        <div class="f-pct">100%</div>
+      </div>
+
+      <!-- Hook connector → P25 -->
+      <div class="f-conn">
+        <div class="f-dashes"><div></div><div></div><div></div></div>
+        <div class="f-badge fb-${hc}">${icon(hc)} HOOK: ${hookRate}% frenó el scroll</div>
+      </div>
+
+      <!-- P25 -->
+      <div class="f-row">
+        <div class="f-lbl">25% del video<br><span style="font-size:9px;color:var(--text3);font-weight:400">${s(d*.25)}</span></div>
+        <div class="f-track"><div class="f-bar b-${hc}" style="width:${w2}%"><span class="f-num">${fmt(ad.p25)}</span></div></div>
+        <div class="f-pct">${pct(ad.p25,ad.impressions)}%</div>
+      </div>
+
+      <!-- P25→P50 connector -->
+      <div class="f-conn">
+        <div class="f-dashes"><div></div><div></div><div></div></div>
+        <div class="f-badge fb-${c25}">${icon(c25)} ${r25_50}% continuó</div>
+        <div class="f-conn-lbl">de los que llegaron al 25%</div>
+      </div>
+
+      <!-- P50 -->
+      <div class="f-row">
+        <div class="f-lbl">50% del video<br><span style="font-size:9px;color:var(--text3);font-weight:400">${s(d*.5)}</span></div>
+        <div class="f-track"><div class="f-bar b-${c25}" style="width:${w3}%"><span class="f-num">${fmt(ad.p50)}</span></div></div>
+        <div class="f-pct">${pct(ad.p50,ad.impressions)}%</div>
+      </div>
+
+      <!-- P50→P75 connector -->
+      <div class="f-conn">
+        <div class="f-dashes"><div></div><div></div><div></div></div>
+        <div class="f-badge fb-${c50}">${icon(c50)} ${r50_75}% continuó</div>
+        <div class="f-conn-lbl">de los que llegaron al 50%</div>
+      </div>
+
+      <!-- P75 -->
+      <div class="f-row">
+        <div class="f-lbl">75% del video<br><span style="font-size:9px;color:var(--text3);font-weight:400">${s(d*.75)}</span></div>
+        <div class="f-track"><div class="f-bar b-${c50}" style="width:${w4}%"><span class="f-num">${fmt(ad.p75)}</span></div></div>
+        <div class="f-pct">${pct(ad.p75,ad.impressions)}%</div>
+      </div>
+
+      <!-- P75→P100 connector -->
+      <div class="f-conn">
+        <div class="f-dashes"><div></div><div></div><div></div></div>
+        <div class="f-badge fb-${c75}">${icon(c75)} ${r75_100}% terminó el video</div>
+        <div class="f-conn-lbl">de los que llegaron al 75%</div>
+      </div>
+
+      <!-- P100 -->
+      <div class="f-row">
+        <div class="f-lbl">100% del video<br><span style="font-size:9px;color:var(--text3);font-weight:400">${s(d)}</span></div>
+        <div class="f-track"><div class="f-bar b-${c75}" style="width:${w5}%"><span class="f-num">${fmt(ad.p100)}</span></div></div>
+        <div class="f-pct">${pct(ad.p100,ad.impressions)}%</div>
+      </div>
+
+      <!-- P100→Conv connector -->
+      <div class="f-conn">
+        <div class="f-dashes"><div></div><div></div><div></div></div>
+        <div class="f-badge fb-${cCV}">${icon(cCV)} ${rConv}% abrió WhatsApp</div>
+        <div class="f-conn-lbl">de los que terminaron el video</div>
+      </div>
+
+      <!-- Conversations -->
+      <div class="f-row">
+        <div class="f-lbl">Abrió chat</div>
+        <div class="f-track"><div class="f-bar b-${cCV}" style="width:${w6}%"><span class="f-num">${fmt(ad.conversations)}</span></div></div>
+        <div class="f-pct">${pct(ad.conversations,ad.impressions)}%</div>
+      </div>
+
+      <!-- Time ruler -->
+      <div class="time-ruler">
+        <div class="tr-title">Mapa de retención visual · ${d}s totales</div>
+        <div class="tr-track">
+          <div class="tr-segment" style="left:0%;width:25%;background:linear-gradient(90deg,#1e3a8a88,#1d4ed888)">25%</div>
+          <div class="tr-segment" style="left:25%;width:25%;background:linear-gradient(90deg,#14532d88,#15803d88)">50%</div>
+          <div class="tr-segment" style="left:50%;width:25%;background:linear-gradient(90deg,#71390888,#92400e88)">75%</div>
+          <div class="tr-segment" style="left:75%;width:25%;background:linear-gradient(90deg,${r75_100<40?"#7f1d1d88,#dc262688":"#4a1d9688,#7c3aed88"})">100%</div>
+        </div>
+        <div class="tr-seg-label">
+          <span class="tr-tick">0s</span>
+          <span class="tr-tick">${s(d*.25)}</span>
+          <span class="tr-tick">${s(d*.5)}</span>
+          <span class="tr-tick">${s(d*.75)}</span>
+          <span class="tr-tick">${s(d)}</span>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-v">${fmt(ad.conversations)}</div>
+          <div class="stat-l">Conversaciones</div>
+        </div>
+        <div class="stat">
+          <div class="stat-v">$${fmt(ad.cpl)}</div>
+          <div class="stat-l">Costo por conv.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-v">${fmtSpend(ad.spend)}</div>
+          <div class="stat-l">Gasto total</div>
+        </div>
+      </div>
+
+    </div>
+  </div>`;
+}
+
+// ─── init ─────────────────────────────────────────────────────────────
+function init() {
+  document.getElementById("grid").innerHTML = ADS.map(buildCard).join("");
+
+  const allSet = Object.values(DRIVE_IDS).every(id => id.trim() !== "");
+  if (allSet) document.getElementById("setupBanner").classList.add("hidden");
+}
+
+init();
+</script>
+</body>
+</html>
